@@ -23,4 +23,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Byteology.TypedHttpClients\Byteology.TypedHttpClients.csproj" />
+  </ItemGroup>
+
 </Project>

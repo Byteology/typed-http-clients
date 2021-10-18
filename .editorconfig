@@ -26,3 +26,7 @@ dotnet_naming_rule.private_fields_underscore_camel_case.severity = suggestion
 
 dotnet_diagnostic.IDE0003.severity = suggestion
 dotnet_diagnostic.CA1825.severity = none
+
+dotnet_diagnostic.S1186.severity = none # does not allow empty methods
+dotnet_diagnostic.S3011.severity = none # does not allow reflection of private members
+dotnet_diagnostic.S3267.severity = none # Loops should be simplified by LINQ
