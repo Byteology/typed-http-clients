@@ -9,7 +9,8 @@ jobs:
   build-and-pack:
     runs-on: ubuntu-latest
     env:
-      project: Byteology.TypedHttpClients
+      project-path: Byteology.TypedHttpClients
+      sonar-project-key: Byteology_typed-http-clients
       
     steps:
       - name: Setup .NET
@@ -19,7 +20,12 @@ jobs:
           
       - name: Checkout
         uses: actions/checkout@v2
-           
+        
+      - name: Sonarqube Begin
+        run: | 
+          dotnet tool install --global dotnet-sonarscanner
+          dotnet sonarscanner begin /o:byteology /k:${sonar-project-key} /d:sonar.login=${{ secrets.SONAR_TOKEN }} /s:$GITHUB_WORKSPACE/SonarQube.Analysis.xml
+          
       - name: Restore
         run: dotnet restore
         
@@ -27,14 +33,19 @@ jobs:
         run: dotnet build --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test --no-build --configuration Release --verbosity normal
+        run: dotnet test --no-build --configuration Release --verbosity normal --settings coverlet.runsettings --logger:trx
         
+      - name: Sonarqube End
+        run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
       - name: Pack
         if: ${{ github.ref == 'refs/heads/master' }}
         run: |
-          version=$(grep -oP '(?<=<Version>).*?(?=</Version>)' ./${project}/*.csproj)
+          version=$(grep -oP '(?<=<Version>).*?(?=</Version>)' ./${project-path}/*.csproj)
           version="${version}-rc-${{ github.run_number }}"
-          dotnet pack ${project} -c Release /property:Version=${version} -o ./out --no-restore --no-build 
+          dotnet pack ${project-path} -c Release /property:Version=${version} -o ./out --no-restore --no-build 
           dotnet nuget push ./out/*.nupkg \
           -s https://nuget.pkg.github.com/Byteology/index.json -k ${{ secrets.GITHUB_TOKEN }} \
           --skip-duplicate --no-symbols true
