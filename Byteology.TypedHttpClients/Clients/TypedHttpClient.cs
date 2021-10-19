@@ -16,15 +16,12 @@ namespace Byteology.TypedHttpClients
     /// </summary>
     /// <typeparam name="TServiceContract">The service contract. It should be an interface containing only
     /// async methods decorated with <see cref="HttpMethodAttribute"/> and having no output parameters.</typeparam>
-#pragma warning disable CS0618 // Type or member is obsolete
+    #pragma warning disable CS0618 // Type or member is obsolete
     public abstract class TypedHttpClient<TServiceContract> : IDispatchHandler, IDisposable
-#pragma warning restore CS0618 // Type or member is obsolete
+    #pragma warning restore CS0618 // Type or member is obsolete
         where TServiceContract : class
     {
-        /// <summary>
-        /// The HTTP client used to send requests.
-        /// </summary>
-        protected HttpClient HttpClient { get; }
+        private readonly HttpClient _httpClient;
 
         /// <summary>
         /// Gets the endpoints of the service.
@@ -32,7 +29,8 @@ namespace Byteology.TypedHttpClients
         public TServiceContract Endpoints { get; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TypedHttpClient{TServiceContract}"/> class using an <see cref="System.Net.Http.HttpClient"/>
+        /// Initializes a new instance of the <see cref="TypedHttpClient{TServiceContract}"/> 
+        /// class using an <see cref="HttpClient"/>
         /// that will send the HTTP requests.
         /// </summary>
         /// <param name="httpClient">The HTTP client.</param>
@@ -40,10 +38,10 @@ namespace Byteology.TypedHttpClients
         {
             Guard.Argument(httpClient, nameof(httpClient)).NotNull();
 
-            HttpClient = httpClient;
-#pragma warning disable CS0618 // Type or member is obsolete
+            _httpClient = httpClient;
+            #pragma warning disable CS0618 // Type or member is obsolete
             Endpoints = DispatchProxyDelegator.Create<TServiceContract>(this);
-#pragma warning restore CS0618 // Type or member is obsolete
+            #pragma warning restore CS0618 // Type or member is obsolete
         }
 
         /// <summary>
@@ -71,6 +69,7 @@ namespace Byteology.TypedHttpClients
 
             return builder.ToString();
         }
+
         /// <summary>
         /// Builds an HTTP request.
         /// </summary>
@@ -80,6 +79,24 @@ namespace Byteology.TypedHttpClients
         /// <param name="tags">The tags of the request. These are provided by the <see cref="HttpMethodAttribute"/> 
         /// in order for this method to be able to recognize requests that require special treatment.</param>
         protected abstract Task<HttpRequestMessage> BuildRequestAsync(string verb, string uri, object body, string[] tags);
+
+        /// <summary>
+        /// Send an HTTP request as an asynchronous operation.
+        /// </summary>
+        /// <param name="httpClient">The HTTP client to use.</param>
+        /// <param name="request">The request to send.</param>
+        /// <param name="tags">The tags of the request. These are specified by the <see cref="HttpMethodAttribute"/> 
+        /// in order for this method to be able to recognize requests that require special treatment.</param>
+        protected virtual async Task<HttpResponseMessage> SendRequestAsync(HttpClient httpClient, HttpRequestMessage request, string[] tags)
+        {
+            Guard.Argument(httpClient, nameof(httpClient)).NotNull();
+            Guard.Argument(request, nameof(request)).NotNull();
+
+            HttpResponseMessage response = await httpClient.SendAsync(request).ConfigureAwait(false);
+            response.RequestMessage = request;
+            return response;
+        }
+
         /// <summary>
         /// Processes the response of an HTTP request.
         /// </summary>
@@ -128,7 +145,7 @@ namespace Byteology.TypedHttpClients
             string[] tags = methodAttribute.Tags;
 
             HttpRequestMessage request = await createRequestAsync(targetMethod, args).ConfigureAwait(false);
-            HttpResponseMessage response = await sendAsync(request).ConfigureAwait(false);
+            HttpResponseMessage response = await SendRequestAsync(_httpClient, request, tags).ConfigureAwait(false);
 
             await ProcessResponse(response, tags).ConfigureAwait(false);
         }
@@ -137,7 +154,7 @@ namespace Byteology.TypedHttpClients
             HttpMethodAttribute methodAttribute = targetMethod.GetCustomAttribute<HttpMethodAttribute>(true);
             string[] tags = methodAttribute.Tags;
             HttpRequestMessage request = await createRequestAsync(targetMethod, args).ConfigureAwait(false);
-            HttpResponseMessage response = await sendAsync(request).ConfigureAwait(false);
+            HttpResponseMessage response = await SendRequestAsync(_httpClient, request, tags).ConfigureAwait(false);
 
             return await ProcessResponse<TResult>(response, tags).ConfigureAwait(false);
         }
@@ -225,15 +242,6 @@ namespace Byteology.TypedHttpClients
             }
         }
 
-        private async Task<HttpResponseMessage> sendAsync(HttpRequestMessage request)
-        {
-            Guard.Argument(request, nameof(request)).NotNull();
-
-            HttpResponseMessage response = await HttpClient.SendAsync(request).ConfigureAwait(false);
-            response.RequestMessage = request;
-            return response;
-        }
-
         private static bool returnsTask(MethodInfo method)
         {
             return method.ReturnType == typeof(Task);
@@ -252,7 +260,7 @@ namespace Byteology.TypedHttpClients
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
-                HttpClient.Dispose();
+                _httpClient.Dispose();
         }
 
         /// <summary>

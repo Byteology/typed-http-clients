@@ -46,7 +46,8 @@ namespace Byteology.TypedHttpClients
         }
 
         /// <summary>
-        /// Throws a <see cref="HttpRequestException"/> when the response's status code is not in the range [200-299].
+        /// Throws an exception if the <see cref="HttpResponseMessage.IsSuccessStatusCode"/>
+        /// property for the HTTP response is false.
         /// </summary>
         /// <param name="response"><inheritdoc path="/param[@name='response']"/></param>
         /// <param name="tags"><inheritdoc path="/param[@name='tags']"/></param>
@@ -58,8 +59,9 @@ namespace Byteology.TypedHttpClients
         }
 
         /// <summary>
-        /// Throws a <see cref="HttpRequestException"/> when the response's status code is not in the range [200-299].
-        /// Otherwise converts the response content to a <typeparamref name="TResult"/> object and returns it.
+        /// Throws an exception if the <see cref="HttpResponseMessage.IsSuccessStatusCode"/>
+        /// property for the HTTP response is false. Otherwise converts the response content
+        /// to a <typeparamref name="TResult"/> object and returns it.
         /// </summary>
         /// <param name="response"><inheritdoc path="/param[@name='response']"/></param>
         /// <param name="tags"><inheritdoc path="/param[@name='tags']"/></param>
