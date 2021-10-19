@@ -232,7 +232,7 @@ namespace Byteology.TypedHttpClients.Tests
             HttpContent content, 
             Action<HttpRequestMessage> onBeforeSend = null)
         {
-            using HttpClient httpClient = MockHttpClientFactory.Create(statusCode, content, onBeforeSend);
+            HttpClient httpClient = MockHttpClientFactory.Create(statusCode, content, onBeforeSend);
             httpClient.BaseAddress = new Uri("https://example.com");
             JsonHttpClient<ITestService> client = new(httpClient);
             return client;
