@@ -10,7 +10,7 @@ namespace Byteology.TypedHttpClients
     [Browsable(false)] // This class shouldn't be used externaly but needs to be seen by calling assemblies so we just hide it from intellisense.
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Obsolete("Meant for internal use only.")]
-    public sealed class DispatchProxyDelegator : DispatchProxy
+    public class DispatchProxyDelegator : DispatchProxy
     {
         /// <summary>
         /// Creates an object instance that implements the provided interface type.
