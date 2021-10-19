@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Reflection;
 
 namespace Byteology.TypedHttpClients
@@ -8,6 +9,7 @@ namespace Byteology.TypedHttpClients
     /// </summary>
     [Browsable(false)] // This interface shouldn't be used externaly but needs to be seen by calling assemblies so we just hide it from intellisense.
     [EditorBrowsable(EditorBrowsableState.Never)]
+    [Obsolete("Meant for internal use only.")]
     public interface IDispatchHandler
     {
         /// <summary>

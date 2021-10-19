@@ -16,7 +16,9 @@ namespace Byteology.TypedHttpClients
     /// </summary>
     /// <typeparam name="TServiceContract">The service contract. It should be an interface containing only
     /// async methods decorated with <see cref="HttpMethodAttribute"/> and having no output parameters.</typeparam>
+#pragma warning disable CS0618 // Type or member is obsolete
     public abstract class TypedHttpClient<TServiceContract> : IDispatchHandler
+#pragma warning restore CS0618 // Type or member is obsolete
         where TServiceContract : class
     {
         private readonly HttpClient _httpClient;
@@ -36,7 +38,9 @@ namespace Byteology.TypedHttpClients
             Guard.Argument(httpClient, nameof(httpClient)).NotNull();
 
             _httpClient = httpClient;
+#pragma warning disable CS0618 // Type or member is obsolete
             Endpoints = DispatchProxyDelegator.Create<TServiceContract>(this);
+#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         /// <summary>
