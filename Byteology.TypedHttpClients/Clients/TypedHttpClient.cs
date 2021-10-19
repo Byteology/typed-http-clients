@@ -17,11 +17,14 @@ namespace Byteology.TypedHttpClients
     /// <typeparam name="TServiceContract">The service contract. It should be an interface containing only
     /// async methods decorated with <see cref="HttpMethodAttribute"/> and having no output parameters.</typeparam>
 #pragma warning disable CS0618 // Type or member is obsolete
-    public abstract class TypedHttpClient<TServiceContract> : IDispatchHandler
+    public abstract class TypedHttpClient<TServiceContract> : IDispatchHandler, IDisposable
 #pragma warning restore CS0618 // Type or member is obsolete
         where TServiceContract : class
     {
-        private readonly HttpClient _httpClient;
+        /// <summary>
+        /// The HTTP client used to send requests.
+        /// </summary>
+        protected HttpClient HttpClient { get; }
 
         /// <summary>
         /// Gets the endpoints of the service.
@@ -29,7 +32,7 @@ namespace Byteology.TypedHttpClients
         public TServiceContract Endpoints { get; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TypedHttpClient{TServiceContract}"/> class using an <see cref="HttpClient"/>
+        /// Initializes a new instance of the <see cref="TypedHttpClient{TServiceContract}"/> class using an <see cref="System.Net.Http.HttpClient"/>
         /// that will send the HTTP requests.
         /// </summary>
         /// <param name="httpClient">The HTTP client.</param>
@@ -37,7 +40,7 @@ namespace Byteology.TypedHttpClients
         {
             Guard.Argument(httpClient, nameof(httpClient)).NotNull();
 
-            _httpClient = httpClient;
+            HttpClient = httpClient;
 #pragma warning disable CS0618 // Type or member is obsolete
             Endpoints = DispatchProxyDelegator.Create<TServiceContract>(this);
 #pragma warning restore CS0618 // Type or member is obsolete
@@ -93,20 +96,6 @@ namespace Byteology.TypedHttpClients
         /// in order for this method to be able to recognize requests that require special treatment.</param>
         protected abstract Task<TResult> ProcessResponse<TResult>(HttpResponseMessage response, string[] tags);
 
-        /// <summary>
-        /// Send an HTTP request as an asynchronous operation.
-        /// </summary>
-        /// <param name="request">The HTTP request message to send.</param>
-        /// <returns>The task object representing the asynchronous operation.</returns>
-        protected async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
-        {
-            Guard.Argument(request, nameof(request)).NotNull();
-
-            HttpResponseMessage response = await _httpClient.SendAsync(request).ConfigureAwait(false);
-            response.RequestMessage = request;
-            return response;
-        }
-
         object IDispatchHandler.Dispatch(MethodInfo targetMethod, object[] args)
         {
             if (targetMethod.GetCustomAttribute<HttpMethodAttribute>(true) == null)
@@ -139,7 +128,7 @@ namespace Byteology.TypedHttpClients
             string[] tags = methodAttribute.Tags;
 
             HttpRequestMessage request = await createRequestAsync(targetMethod, args).ConfigureAwait(false);
-            HttpResponseMessage response = await SendAsync(request).ConfigureAwait(false);
+            HttpResponseMessage response = await sendAsync(request).ConfigureAwait(false);
 
             await ProcessResponse(response, tags).ConfigureAwait(false);
         }
@@ -148,10 +137,11 @@ namespace Byteology.TypedHttpClients
             HttpMethodAttribute methodAttribute = targetMethod.GetCustomAttribute<HttpMethodAttribute>(true);
             string[] tags = methodAttribute.Tags;
             HttpRequestMessage request = await createRequestAsync(targetMethod, args).ConfigureAwait(false);
-            HttpResponseMessage response = await SendAsync(request).ConfigureAwait(false);
+            HttpResponseMessage response = await sendAsync(request).ConfigureAwait(false);
 
             return await ProcessResponse<TResult>(response, tags).ConfigureAwait(false);
         }
+
         private async Task<HttpRequestMessage> createRequestAsync(MethodInfo targetMethod, object[] args)
         {
             HttpMethodAttribute methodAttribute = targetMethod.GetCustomAttribute<HttpMethodAttribute>(true);
@@ -166,7 +156,6 @@ namespace Byteology.TypedHttpClients
             HttpRequestMessage request = await BuildRequestAsync(verb, uri, body, tags).ConfigureAwait(false);
             return request;
         }
-
         private static List<HttpUriParameter> getParameters(MethodInfo targetMethod, object[] args, out object body)
         {
             List<HttpUriParameter> result = new();
@@ -236,6 +225,15 @@ namespace Byteology.TypedHttpClients
             }
         }
 
+        private async Task<HttpResponseMessage> sendAsync(HttpRequestMessage request)
+        {
+            Guard.Argument(request, nameof(request)).NotNull();
+
+            HttpResponseMessage response = await HttpClient.SendAsync(request).ConfigureAwait(false);
+            response.RequestMessage = request;
+            return response;
+        }
+
         private static bool returnsTask(MethodInfo method)
         {
             return method.ReturnType == typeof(Task);
@@ -243,6 +241,28 @@ namespace Byteology.TypedHttpClients
         private static bool returnsGenericTask(MethodInfo method)
         {
             return method.ReturnType.IsGenericType && method.ReturnType.GetGenericTypeDefinition() == typeof(Task<>);
+        }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting
+        /// unmanaged resources.
+        /// </summary>
+        /// <param name="disposing">Indicates whether the method call comes from a Dispose method (its value is true) 
+        /// or from a finalizer (its value is false).</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+                HttpClient.Dispose();
+        }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting
+        /// unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }
