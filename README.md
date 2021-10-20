@@ -109,6 +109,10 @@ async void ExampleMethodAsync(string bookId)
 }
 ```
 
-## Supported Clients
+## Available Clients
 
-## Extending with your own typed clients
+Currently the only available client is the `JsonHttpClient`. It works by serializing and deserializing message contents by using `System.Text.Json.JsonSerializer`.
+
+Additionally the `TypedHttpClient` base class provides useful abstract and virtual methods for implementing your own typed HTTP clients.
+
+Moreover, if you are in need of another commonly used type of client, don't hasitate to create a feature request and we'll be happy to implement it for you.
