@@ -20,26 +20,26 @@ Before being able to consume a service you have to define its contract or at lea
 ```c#
 public class Book
 {
-  public Guid Id { get; set; }
-  public string Name { get; set; }
-  public string Author { get; set; }
-  public DateTime PublicationDate { get; set; }
+    public Guid Id { get; set; }
+    public string Name { get; set; }
+    public string Author { get; set; }
+    public DateTime PublicationDate { get; set; }
 }
 ```
 ```c#
 public interface ILibraryService
 {
-  [HttpEndpoint("GET", "/books/{id}")]
-  Task<Book> GetBookAsync(string id);
+    [HttpEndpoint("GET", "/books/{id}")]
+    Task<Book> GetBookAsync(string id);
   
-  [HttpEndpoint("GET", "/books")]
-  Task<IEnumerable<Book>> GetBooksByAuthorAsync(string author);
+    [HttpEndpoint("GET", "/books")]
+    Task<IEnumerable<Book>> GetBooksByAuthorAsync(string author);
   
-  [HttpEndpoint("POST", "/books")]
-  Task<Book> AddBookAsync([HttpBody] Book book);
+    [HttpEndpoint("POST", "/books")]
+    Task<Book> AddBookAsync([HttpBody] Book book);
   
-  [HttpEndpoint("DELETE", "/books/{id}")]
-  Task DeleteBookAsync(string id);
+    [HttpEndpoint("DELETE", "/books/{id}")]
+    Task DeleteBookAsync(string id);
 }
 ```
 ## Consuming the Service
@@ -72,6 +72,24 @@ public class Startup
 
 After that you'll be able to inject `ILibraryService` into your code and it will send HTTP requests to `https://mylibraryservice.com` and parse the responses properly. You can also use the parameter of the `AddTypedHttpClient` method to configure the underlying `HttpClient` according to your needs.
 
+```c#
+public class InjectedClass
+{
+    private readonly ILibraryService _libraryService;
+
+    public InjectedClass(ILibraryService libraryService)
+    {
+       _libraryService = libraryService;
+    }
+  
+    async void ExampleMethodAsync(string bookId)
+    {
+        Book book = await _libraryService.Endpoints.GetBookAsync(bookId);
+        // ...
+    }
+}
+```
+
 ### Directly Initializing a Typed Http Client
 
 You can always just initialize a new typed HTTP client via its constructor and then access its `Endpoints` property but you have to be careful with the lifecycle of the `HttpClient`.
@@ -79,14 +97,15 @@ You can always just initialize a new typed HTTP client via its constructor and t
 ```c#
 async void ExampleMethodAsync(string bookId)
 {
-  using HttpClient httpClient = new HttpClient()
-  {
-      BaseAddress = new Uri("https://mylibraryservice.com")
-  };
-  JsonHttpClient<ILibraryService> service = new(httpClient);
+    using HttpClient httpClient = new HttpClient()
+    {
+        BaseAddress = new Uri("https://mylibraryservice.com")
+    };
   
-  Book book = await service.Endpoints.GetBookAsync(bookId);
-  // ...
+    JsonHttpClient<ILibraryService> service = new(httpClient);
+  
+    Book book = await service.Endpoints.GetBookAsync(bookId);
+    // ...
 }
 ```
 
