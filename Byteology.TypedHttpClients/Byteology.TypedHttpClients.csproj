@@ -19,6 +19,7 @@
     <None Include="..\Icon.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
+      <Visible>False</Visible>
     </None>
   </ItemGroup>
 
@@ -26,10 +27,14 @@
     <None Include="..\README.md">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
+      <Visible>False</Visible>
     </None>
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Byteology.GuardClauses" Version="1.1.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
     <PackageReference Include="SonarAnalyzer.CSharp" Version="8.30.0.37606">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
