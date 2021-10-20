@@ -4,39 +4,39 @@ namespace Byteology.TypedHttpClients.Tests.TestServices
 {
     internal interface ITestService
     {
-        [HttpMethod("POST", "/noresultaction")]
+        [HttpEndpoint("POST", "/noresultaction")]
         Task NoResultActionAsync();
 
-        [HttpMethod("POST", "/action")]
+        [HttpEndpoint("POST", "/action")]
         Task<TestServiceResult> ActionAsync();
 
-        [HttpMethod("POST", "/actionbody")]
+        [HttpEndpoint("POST", "/actionbody")]
         Task BodyActionAsync([HttpBody]TestServiceResult body);
 
-        [HttpMethod("POST", "/simpleuri")]
+        [HttpEndpoint("POST", "/simpleuri")]
         Task SimpleUriAsync();
 
-        [HttpMethod("POST", "simpleuri")]
+        [HttpEndpoint("POST", "simpleuri")]
         Task SimpleUriNoDashAsync();
 
-        [HttpMethod("POST", "/paramuri/{param}")]
+        [HttpEndpoint("POST", "/paramuri/{param}")]
         Task ParamUriAsync(object param);
 
-        [HttpMethod("POST", "/query")]
+        [HttpEndpoint("POST", "/query")]
         Task QueryAsync(int i, string s, bool b, float f, object n, int?[] a);
 
-        [HttpMethod("VERB", "/verb")]
+        [HttpEndpoint("VERB", "/verb")]
         Task VerbAsync();
 
-        [HttpMethod("POST", "/uri")]
+        [HttpEndpoint("POST", "/uri")]
         Task OutParamAsync(out int param);
 
-        [HttpMethod("POST", "/uri")]
+        [HttpEndpoint("POST", "/uri")]
         Task MultipleBodyAsync([HttpBody] int param, [HttpBody] int param2);
 
         Task NotDecoratedAsync();
 
-        [HttpMethod("POST", "/uri")]
+        [HttpEndpoint("POST", "/uri")]
         int NotAsync();
     }
 

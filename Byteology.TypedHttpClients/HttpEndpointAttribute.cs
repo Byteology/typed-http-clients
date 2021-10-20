@@ -9,7 +9,7 @@ namespace Byteology.TypedHttpClients
     /// </summary>
     /// <seealso cref="TypedHttpClient{TServiceContract}"/>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-    public class HttpMethodAttribute : Attribute
+    public class HttpEndpointAttribute : Attribute
     {
         /// <summary>
         /// Gets the endpoint route. May contain parameter names surrounded by curly brackets
@@ -30,7 +30,7 @@ namespace Byteology.TypedHttpClients
         public string[] Tags { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="HttpMethodAttribute"/> class.
+        /// Initializes a new instance of the <see cref="HttpEndpointAttribute"/> class.
         /// It is used to mark a method's signature as a description of an HTTP endpoint.
         /// See <see cref="TypedHttpClient{TServiceContract}"/> for more information.
         /// </summary>
@@ -39,7 +39,7 @@ namespace Byteology.TypedHttpClients
         /// May contain parameter names surrounded by curly brackets which will be replaced by the passed argument.</param>
         /// <exception cref="ArgumentNullException"></exception>
         /// <seealso cref="TypedHttpClient{TServiceContract}" />
-        public HttpMethodAttribute(string verb, string routeTemplate)
+        public HttpEndpointAttribute(string verb, string routeTemplate)
         {
             Guard.Argument(verb, nameof(verb)).NotNullOrWhiteSpace();
             Guard.Argument(routeTemplate, nameof(routeTemplate)).NotNull();
