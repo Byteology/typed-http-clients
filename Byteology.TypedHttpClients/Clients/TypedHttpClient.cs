@@ -15,7 +15,10 @@ namespace Byteology.TypedHttpClients
     /// Provides a base class for HTTP clients that implement a service contract.
     /// </summary>
     /// <typeparam name="TServiceContract">The service contract. It should be an interface containing only
-    /// async methods decorated with <see cref="HttpEndpointAttribute"/> and having no output parameters.</typeparam>
+    /// async methods decorated with <see cref="HttpEndpointAttribute"/> and having no output parameters.
+    /// A single method parameter is allowed to be decorated with the <see cref="HttpBodyAttribute"/>
+    /// in order to be used as the request's content. All other parameters will be used either as route or query parameters
+    /// depending on whether their name has a match in the <see cref="HttpEndpointAttribute.RouteTemplate"/> or not.</typeparam>
     #pragma warning disable CS0618 // Type or member is obsolete
     public abstract class TypedHttpClient<TServiceContract> : IDispatchHandler
     #pragma warning restore CS0618 // Type or member is obsolete

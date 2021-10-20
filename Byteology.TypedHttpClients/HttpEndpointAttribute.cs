@@ -13,7 +13,7 @@ namespace Byteology.TypedHttpClients
     {
         /// <summary>
         /// Gets the endpoint route. May contain parameter names surrounded by curly brackets
-        /// which will be replaced by the passed argument.
+        /// which will be replaced by the passed arguments.
         /// </summary>
         public string RouteTemplate { get; }
 
