@@ -17,7 +17,7 @@ namespace Byteology.TypedHttpClients
     /// <typeparam name="TServiceContract">The service contract. It should be an interface containing only
     /// async methods decorated with <see cref="HttpEndpointAttribute"/> and having no output parameters.</typeparam>
     #pragma warning disable CS0618 // Type or member is obsolete
-    public abstract class TypedHttpClient<TServiceContract> : IDispatchHandler, IDisposable
+    public abstract class TypedHttpClient<TServiceContract> : IDispatchHandler
     #pragma warning restore CS0618 // Type or member is obsolete
         where TServiceContract : class
     {
@@ -249,28 +249,6 @@ namespace Byteology.TypedHttpClients
         private static bool returnsGenericTask(MethodInfo method)
         {
             return method.ReturnType.IsGenericType && method.ReturnType.GetGenericTypeDefinition() == typeof(Task<>);
-        }
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting
-        /// unmanaged resources.
-        /// </summary>
-        /// <param name="disposing">Indicates whether the method call comes from a Dispose method (its value is true) 
-        /// or from a finalizer (its value is false).</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-                _httpClient.Dispose();
-        }
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting
-        /// unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
         }
     }
 }
