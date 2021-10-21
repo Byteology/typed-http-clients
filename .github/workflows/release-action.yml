@@ -8,7 +8,7 @@ jobs:
   build-and-publish:
     runs-on: ubuntu-latest
     env:
-      project: Byteology.TypedHttpClients
+      project_path: Byteology.TypedHttpClients
       
     steps:
       - name: Setup .NET
@@ -29,7 +29,7 @@ jobs:
         run: dotnet test --no-build --configuration Release --verbosity normal
           
       - name: Pack
-        run: dotnet pack $project -c Release -o ./out --no-restore --no-build 
+        run: dotnet pack $project_path -c Release -o ./out --no-restore --no-build 
 
       - name: Push package - local
         run: |
