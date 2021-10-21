@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\README.md">
+    <None Include="..\.github\README.md">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
       <Visible>False</Visible>
