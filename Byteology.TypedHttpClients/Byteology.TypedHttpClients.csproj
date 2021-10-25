@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <IsPackable>True</IsPackable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Authors>Byteology</Authors>
     <Company>Byteology Ltd</Company>
