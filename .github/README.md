@@ -84,7 +84,7 @@ public class InjectedClass
   
     async void ExampleMethodAsync(string bookId)
     {
-        Book book = await _libraryService.Endpoints.GetBookAsync(bookId);
+        Book book = await _libraryService.GetBookAsync(bookId);
         // ...
     }
 }
