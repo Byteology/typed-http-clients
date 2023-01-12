@@ -12,7 +12,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 5.0.x
+          dotnet-version: 6.0.x
     
       - name: Checkout
         uses: actions/checkout@v2
@@ -33,10 +33,10 @@ jobs:
         run: |
           dotnet nuget push ./out/*.nupkg \
           -s https://nuget.pkg.github.com/Byteology/index.json -k ${{ secrets.GITHUB_TOKEN }} \
-          --skip-duplicate --no-symbols true
+          --skip-duplicate --no-symbols
 
       - name: Push package - NuGet.org
         run: |
           dotnet nuget push ./out/*.nupkg \
           -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }} \
-          --skip-duplicate --no-symbols true
+          --skip-duplicate --no-symbols
