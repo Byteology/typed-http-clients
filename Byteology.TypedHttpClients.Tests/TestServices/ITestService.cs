@@ -2,42 +2,41 @@
 
 namespace Byteology.TypedHttpClients.Tests.TestServices
 {
-    internal interface ITestService
-    {
-        [HttpEndpoint("POST", "/noresultaction")]
-        Task NoResultActionAsync();
+	internal interface ITestService
+	{
+		[HttpEndpoint("POST", "/noResultAction")]
+		Task NoResultActionAsync();
 
-        [HttpEndpoint("POST", "/action")]
-        Task<TestServiceResult> ActionAsync();
+		[HttpEndpoint("POST", "/action", Tags = new[] { "tag" })]
+		Task<TestServiceResult> ActionAsync();
 
-        [HttpEndpoint("POST", "/actionbody")]
-        Task BodyActionAsync([HttpBody]TestServiceResult body);
+		[HttpEndpoint("POST", "/actionBody")]
+		Task BodyActionAsync([HttpBody] TestServiceResult body);
 
-        [HttpEndpoint("POST", "/simpleuri")]
-        Task SimpleUriAsync();
+		[HttpEndpoint("POST", "/simpleUri")]
+		Task SimpleUriAsync();
 
-        [HttpEndpoint("POST", "simpleuri")]
-        Task SimpleUriNoDashAsync();
+		[HttpEndpoint("POST", "simpleUri")]
+		Task SimpleUriNoDashAsync();
 
-        [HttpEndpoint("POST", "/paramuri/{param}")]
-        Task ParamUriAsync(object param);
+		[HttpEndpoint("POST", "/paramUri/{param}")]
+		Task ParamUriAsync(object param);
 
-        [HttpEndpoint("POST", "/query")]
-        Task QueryAsync(int i, string s, bool b, float f, object n, int?[] a);
+		[HttpEndpoint("POST", "/query")]
+		Task QueryAsync(int i, string s, bool b, float f, object? n, int?[] a);
 
-        [HttpEndpoint("VERB", "/verb")]
-        Task VerbAsync();
+		[HttpEndpoint("VERB", "/verb")]
+		Task VerbAsync();
 
-        [HttpEndpoint("POST", "/uri")]
-        Task OutParamAsync(out int param);
+		[HttpEndpoint("POST", "/uri")]
+		Task OutParamAsync(out int param);
 
-        [HttpEndpoint("POST", "/uri")]
-        Task MultipleBodyAsync([HttpBody] int param, [HttpBody] int param2);
+		[HttpEndpoint("POST", "/uri")]
+		Task MultipleBodyAsync([HttpBody] int param, [HttpBody] int param2);
 
-        Task NotDecoratedAsync();
+		Task NotDecoratedAsync();
 
-        [HttpEndpoint("POST", "/uri")]
-        int NotAsync();
-    }
-
+		[HttpEndpoint("POST", "/uri")]
+		int NotAsync();
+	}
 }

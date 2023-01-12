@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <IsPackable>True</IsPackable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Authors>Byteology</Authors>
@@ -9,11 +9,12 @@
     <RepositoryUrl>https://github.com/Byteology/typed-http-clients.git</RepositoryUrl>
     <PackageIcon>Icon.png</PackageIcon>
     <Description>Provides classes for creating typed http clients from an interface describing a service.</Description>
-    <Version>1.0.0</Version>
+    <Version>2.0.0</Version>
     <PackageTags>http typed HttpClient HttpClientFactory</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/Byteology/typed-http-clients</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
