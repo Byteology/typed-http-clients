@@ -18,6 +18,6 @@ namespace Byteology.TypedHttpClients
 		/// <param name="targetMethod">The invoked method.</param>
 		/// <param name="args">The arguments with which the method was invoked.</param>
 		/// <returns>The result of the method execution.</returns>
-		object? Dispatch(MethodInfo? targetMethod, object?[]? args);
+		object? Dispatch(MethodInfo targetMethod, object?[]? args);
 	}
 }

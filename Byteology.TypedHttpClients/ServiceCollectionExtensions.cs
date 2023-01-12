@@ -10,7 +10,7 @@ namespace Byteology.TypedHttpClients
 	/// </summary>
 	public static class ServiceCollectionExtensions
 	{
-		/// <inheritdoc cref="AddTypedHttpClient{TServiceContract, TClient}(IServiceCollection, System.Action{System.Net.Http.HttpClient}(System.Net.Http.HttpClient))"/>
+		/// <inheritdoc cref="AddTypedHttpClient{TServiceContract, TClient}(IServiceCollection, System.Action{System.Net.Http.HttpClient})"/>
 		public static IServiceCollection AddTypedHttpClient<TServiceContract, TClient>(this IServiceCollection services)
 			where TClient : TypedHttpClient<TServiceContract>
 			where TServiceContract : class
@@ -19,8 +19,8 @@ namespace Byteology.TypedHttpClients
 		}
 
 		/// <summary>
-		/// Configures a binding between <typeparamref name="TServiceContract"/> and <typeparamref name="TClient"/> using an 
-		/// underlying named <see cref="HttpClient"/>. The <see cref="HttpClient"/> name will be set to the 
+		/// Configures a binding between <typeparamref name="TServiceContract"/> and <typeparamref name="TClient"/> using an
+		/// underlying named <see cref="HttpClient"/>. The <see cref="HttpClient"/> name will be set to the
 		/// type name of <typeparamref name="TServiceContract"/>.
 		/// </summary>
 		/// <typeparam name="TServiceContract"><inheritdoc cref="TypedHttpClient{TServiceContract}" path="/typeparam"/></typeparam>

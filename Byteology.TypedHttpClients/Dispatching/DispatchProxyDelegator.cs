@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace Byteology.TypedHttpClients
@@ -19,6 +20,8 @@ namespace Byteology.TypedHttpClients
 		/// </summary>
 		/// <typeparam name="TInterface">The type of the interface to be implemented.</typeparam>
 		/// <param name="handler">The object that will handle the <see cref="DispatchProxy"/> method calls.</param>
+		[SuppressMessage("Major Code Smell",
+						 "S3011:Reflection should not be used to increase accessibility of classes, methods, or fields")]
 		public static TInterface Create<TInterface>(IDispatchHandler handler)
 			where TInterface : class
 		{
@@ -43,7 +46,7 @@ namespace Byteology.TypedHttpClients
 		/// <returns>The object to return to the caller, or <see langword="null" /> for void methods. </returns>
 		protected override object? Invoke(MethodInfo? targetMethod, object?[]? args)
 		{
-			return _dispatcher?.Dispatch(targetMethod, args);
+			return _dispatcher!.Dispatch(targetMethod!, args);
 		}
 	}
 }

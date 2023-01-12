@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
@@ -47,9 +48,11 @@ namespace Byteology.TypedHttpClients
 		/// </summary>
 		public TServiceContract Endpoints { get; }
 
-		object? IDispatchHandler.Dispatch(MethodInfo? targetMethod, object?[]? args)
+		[SuppressMessage("Major Code Smell",
+						 "S3011:Reflection should not be used to increase accessibility of classes, methods, or fields")]
+		object? IDispatchHandler.Dispatch(MethodInfo targetMethod, object?[]? args)
 		{
-			if (targetMethod?.GetCustomAttribute<HttpEndpointAttribute>(true) == null)
+			if (targetMethod.GetCustomAttribute<HttpEndpointAttribute>(true) == null)
 				throw new
 					InvalidOperationException($"The method should be decorated with the {typeof(HttpEndpointAttribute)}.");
 
@@ -80,7 +83,7 @@ namespace Byteology.TypedHttpClients
 		/// Builds a query string.
 		/// </summary>
 		/// <param name="queryParameters">The query parameters.</param>
-		/// <param name="tags">The tags of the request. These are provided by the <see cref="HttpEndpointAttribute"/> 
+		/// <param name="tags">The tags of the request. These are provided by the <see cref="HttpEndpointAttribute"/>
 		/// in order for this method to be able to recognize requests that require special treatment.</param>
 		protected virtual string BuildQueryString(IEnumerable<HttpUriParameter> queryParameters, string[]? tags)
 		{
@@ -108,7 +111,7 @@ namespace Byteology.TypedHttpClients
 		/// <param name="verb">The HTTP verb of the request.</param>
 		/// <param name="uri">The URI of the request.</param>
 		/// <param name="body">The content body of the request or <see langword="null"/> if no body should be provided.</param>
-		/// <param name="tags">The tags of the request. These are provided by the <see cref="HttpEndpointAttribute"/> 
+		/// <param name="tags">The tags of the request. These are provided by the <see cref="HttpEndpointAttribute"/>
 		/// in order for this method to be able to recognize requests that require special treatment.</param>
 		protected abstract Task<HttpRequestMessage> BuildRequestAsync(string verb, string uri, object? body,
 																	  string[]? tags);
@@ -118,7 +121,7 @@ namespace Byteology.TypedHttpClients
 		/// </summary>
 		/// <param name="httpClient">The HTTP client to use.</param>
 		/// <param name="request">The request to send.</param>
-		/// <param name="tags">The tags of the request. These are specified by the <see cref="HttpEndpointAttribute"/> 
+		/// <param name="tags">The tags of the request. These are specified by the <see cref="HttpEndpointAttribute"/>
 		/// in order for this method to be able to recognize requests that require special treatment.</param>
 		protected virtual async Task<HttpResponseMessage> SendRequestAsync(
 			HttpClient httpClient, HttpRequestMessage request, string[]? tags)
@@ -135,7 +138,7 @@ namespace Byteology.TypedHttpClients
 		/// Processes the response of an HTTP request.
 		/// </summary>
 		/// <param name="response">The HTTP response.</param>
-		/// <param name="tags">The tags of the request. These are specified by the <see cref="HttpEndpointAttribute"/> 
+		/// <param name="tags">The tags of the request. These are specified by the <see cref="HttpEndpointAttribute"/>
 		/// in order for this method to be able to recognize requests that require special treatment.</param>
 		protected abstract Task ProcessResponse(HttpResponseMessage response, string[]? tags);
 
@@ -144,7 +147,7 @@ namespace Byteology.TypedHttpClients
 		/// </summary>
 		/// <typeparam name="TResult">The type of the object the response message should be converted to.</typeparam>
 		/// <param name="response">The HTTP response.</param>
-		/// <param name="tags">The tags of the request. These are specified by the <see cref="HttpEndpointAttribute"/> 
+		/// <param name="tags">The tags of the request. These are specified by the <see cref="HttpEndpointAttribute"/>
 		/// in order for this method to be able to recognize requests that require special treatment.</param>
 		protected abstract Task<TResult> ProcessResponse<TResult>(HttpResponseMessage response, string[]? tags);
 
