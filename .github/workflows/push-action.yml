@@ -10,31 +10,27 @@ jobs:
     runs-on: ubuntu-latest
     env:
       sonar_project_key: Byteology_typed-http-clients
+      sonar_project_name: typed-http-clients
+      sonar_organization: byteology
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
     steps:
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 6.0.x
-          
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         
-      - name: Sonarqube Begin
-        run: | 
-          dotnet tool install --global dotnet-sonarscanner
-          dotnet sonarscanner begin /o:byteology /k:${sonar_project_key} /d:sonar.login=${{ secrets.SONAR_TOKEN }} /s:$GITHUB_WORKSPACE/.sonar/SonarQube.Analysis.xml
-          
-      - name: Restore
-        run: dotnet restore
-        
-      - name: Build
-        run: dotnet build --configuration Release --no-restore
-
-      - name: Test
-        run: dotnet test --no-build --configuration Release --verbosity normal --settings ./.sonar/coverlet.runsettings --logger:trx
-        
-      - name: Sonarqube End
-        run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: SonarScanner for .NET 6
+        uses: highbyte/sonarscan-dotnet@v2.1.5
+        with:
+          # The key of the SonarQube project
+          sonarProjectKey: ${sonar_project_key}
+          # The name of the SonarQube project
+          sonarProjectName: ${sonar_project_name}
+          # The name of the SonarQube organization in SonarCloud. For hosted SonarQube, skip this setting.
+          sonarOrganization: ${sonar_organization}
+          # Optional command arguments to dotnet build
+          dotnetBuildArguments: --configuration Release
+          # Optional command arguments to dotnet test
+          dotnetTestArguments: --no-build --configuration Release --verbosity normal --settings ./.sonar/coverlet.runsettings --logger:trx
+          # Optional extra command arguments the the SonarScanner 'begin' command
+          sonarBeginArguments: /s:$GITHUB_WORKSPACE/.sonar/SonarQube.Analysis.xml
